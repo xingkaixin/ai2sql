@@ -21,7 +21,7 @@ def yaml_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
 
 class OpenAI(BaseSettings):
     base_url: str
-    key: str
+    key: list[str]
 
     @validator("base_url", pre=True, always=True)
     def formatted_base_url(cls, v):

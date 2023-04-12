@@ -1,1 +1,1 @@
-from .gptbot import GPTBot  # noqa: F401
+from .gptbot import GPTBot
