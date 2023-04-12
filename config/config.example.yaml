@@ -1,3 +1,10 @@
 openai:
     base_url: "YOUR_OPENAI_BASE_URL"
     key: "YOUR_OPENAI_KEY"
+storage:
+  rdb:
+    host: "YOUR_RDB_HOST"
+    port: YOUR_RDB_PORT
+    username: "YOUR_RDB_USERNAME"
+    password: "YOUR_RDB_PASSWORD"
+    db: "YOUR_RDB_DBNAME"

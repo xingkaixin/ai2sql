@@ -16,6 +16,7 @@ class Logger:
     ):
         self.log_path = Path(log_dir).joinpath("run.log")
         self.log_path.parent.mkdir(exist_ok=True, parents=True)
+        log.remove()
         log.add(
             self.log_path,
             rotation=rotation,

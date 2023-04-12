@@ -13,7 +13,9 @@ def yaml_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     path = Path(yaml_file)
 
     if not path.exists():
-        raise FileNotFoundError(f"Could not open yaml settings file at: {path}")
+        raise FileNotFoundError(
+            f"Could not open yaml settings file at: {path}"
+        )  # noqa E501
     return yaml.safe_load(path.read_text("utf-8"))
 
 
