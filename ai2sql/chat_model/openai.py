@@ -1,12 +1,10 @@
-import random
 from typing import Any, Dict, Optional
 
 from pydantic import root_validator
 
 from ai2sql.chat_model.base import BaseChatModel
 from ai2sql.core.config import openai_config
-from ai2sql.schemas.message import BaseMessage
-from ai2sql.schemas.template import BaseTemplate
+from ai2sql.schemas.message import BaseMessage, messages_to_dict
 
 
 class ChatOpenAI(BaseChatModel):
@@ -22,7 +20,7 @@ class ChatOpenAI(BaseChatModel):
     @root_validator()
     def validate_environment(cls, values: Dict) -> Dict:
         """Validate that api key and python package exists in environment."""
-        openai_api_key = random.choice(openai_config.key)
+        openai_api_key = next(openai_config.keys)
         openai_base_url = openai_config.base_url
         try:
             import openai
@@ -51,29 +49,27 @@ class ChatOpenAI(BaseChatModel):
 
     def __call__(
         self,
-        prompt: list[BaseMessage] | list[BaseTemplate],
+        messages: list[BaseMessage],
         stop: Optional[list[str]] = None,
     ):
-        return self._generate(prompt, stop)
+        return self._generate(messages, stop)
 
     def _generate(
         self,
-        prompt: list[BaseMessage] | list[BaseTemplate],
+        messages: list[BaseMessage],
         stop: Optional[list[str]] = None,
     ):
-        return self._prompt_to_messages(prompt)
+        response = self.client.create(
+            model=self.model_name,
+            messages=self._create_message_dicts(messages),
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
+            stop=stop,
+        )
+        return (
+            response["choices"][0].get("message").get("content").encode("utf8").decode()
+        )
 
     @staticmethod
-    def _prompt_to_messages(prompt):
-        if isinstance(prompt, dict):
-            return [prompt]
-        elif isinstance(prompt, BaseMessage):
-            return [prompt.to_messages()]
-        elif isinstance(prompt, list) and all(
-            isinstance(p, BaseMessage) for p in prompt
-        ):
-            return [p.to_messages() for p in prompt]
-        elif isinstance(prompt, list) and all(
-            isinstance(p, BaseTemplate) for p in prompt
-        ):
-            return [p for p in prompt]
+    def _create_message_dicts(messages):
+        return messages_to_dict(messages)

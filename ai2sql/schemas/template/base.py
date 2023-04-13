@@ -1,57 +1,36 @@
-import json
+from abc import ABC, abstractmethod
+from typing import Any
 
 from pydantic import BaseModel
 
-from ai2sql.schemas.role import ChatRole
+from ai2sql.schemas.message import AIMessage, BaseMessage, SystemMessage, UserMessage
 
 
-class BaseTemplate(BaseModel):
-    role: ChatRole
-    content: str
-
-    @classmethod
-    def from_template(cls, in_template: str):
-        return cls(role=ChatRole.default, content=in_template)
-
-    def __str__(self):
-        return json.dumps(self.dict())
-
-
-class SystemTemplate(BaseTemplate):
-    @classmethod
-    def from_template(cls, in_template: str):
-        return cls(role=ChatRole.system, content=in_template)
-
-
-class UserTemplate(BaseTemplate):
-    @classmethod
-    def from_template(cls, in_template: str):
-        return cls(role=ChatRole.user, content=in_template)
-
-
-class AITemplate(BaseTemplate):
-    @classmethod
-    def from_template(cls, in_template: str):
-        return cls(role=ChatRole.assistant, content=in_template)
-
-
-class ChatPromptTemplate(BaseModel):
-    messages: list
+class BaseMessageTemplate(BaseModel, ABC):
+    prompt: str
 
     @classmethod
-    def from_messages(cls, messages: list[BaseTemplate]):
-        return cls(messages=messages)
+    def from_template(cls, template: str):
+        return cls(prompt=template)
 
-    def format_prompt(self, **process_params):
-        formatted_messages = []
-        for message in self.messages:
-            print(message)
-            formatted_messages.append(
-                BaseTemplate(
-                    role=message.role, content=message.content.format(**process_params)
-                )
-            )
-        return ChatPromptTemplate.from_messages(formatted_messages)
+    @abstractmethod
+    def format_prompt(self, **kwargs: Any) -> BaseMessage:
+        return
 
-    def to_messages(self):
-        return [json.loads(str(msg)) for msg in self.messages]
+
+class SystemMessageTemplate(BaseMessageTemplate):
+    def format_prompt(self, **kwargs: Any) -> BaseMessage:
+        text = self.prompt.format(**kwargs)
+        return SystemMessage(content=text)
+
+
+class UserMessageTemplate(BaseMessageTemplate):
+    def format_prompt(self, **kwargs: Any) -> BaseMessage:
+        text = self.prompt.format(**kwargs)
+        return UserMessage(content=text)
+
+
+class AIMessageTemplate(BaseMessageTemplate):
+    def format_prompt(self, **kwargs: Any) -> BaseMessage:
+        text = self.prompt.format(**kwargs)
+        return AIMessage(content=text)

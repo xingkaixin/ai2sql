@@ -1,5 +1,6 @@
+import itertools
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import yaml
 from pydantic import BaseSettings, validator
@@ -13,19 +14,24 @@ def yaml_config_settings_source(settings: BaseSettings) -> dict[str, Any]:
     path = Path(yaml_file)
 
     if not path.exists():
-        raise FileNotFoundError(
-            f"Could not open yaml settings file at: {path}"
-        )  # noqa E501
+        raise FileNotFoundError(f"Could not open yaml settings file at: {path}")
     return yaml.safe_load(path.read_text("utf-8"))
 
 
 class OpenAI(BaseSettings):
     base_url: str
     key: list[str]
+    keys: Optional[itertools.cycle] = None
 
     @validator("base_url", pre=True, always=True)
     def formatted_base_url(cls, v):
         return f"{v}/v1" if v is not None else v
+
+    @validator("keys", pre=True, always=True)
+    def generate_keys(cls, v, values):
+        if "key" in values:
+            return itertools.cycle(values["key"])
+        return v
 
 
 class Config(BaseSettings):
