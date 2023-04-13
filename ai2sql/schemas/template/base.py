@@ -2,7 +2,7 @@ import json
 
 from pydantic import BaseModel
 
-from ..role import ChatRole
+from ai2sql.schemas.role import ChatRole
 
 
 class BaseTemplate(BaseModel):

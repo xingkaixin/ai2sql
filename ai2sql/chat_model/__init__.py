@@ -1,0 +1,1 @@
+from ai2sql.chat_model.openai import ChatOpenAI

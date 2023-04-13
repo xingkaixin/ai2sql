@@ -2,7 +2,7 @@ import json
 
 from pydantic import BaseModel
 
-from ..role import ChatRole
+from ai2sql.schemas.role import ChatRole
 
 
 class BaseMessage(BaseModel):
@@ -11,6 +11,9 @@ class BaseMessage(BaseModel):
 
     def __str__(self):
         return json.dumps(self.dict())
+
+    def to_messages(self):
+        return json.loads(json.dumps(self.dict()))
 
 
 class SystemMessage(BaseMessage):
