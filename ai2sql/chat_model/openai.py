@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional
 
+import tiktoken
 from pydantic import root_validator
 
 from ai2sql.chat_model.base import BaseChatModel
@@ -46,6 +47,12 @@ class ChatOpenAI(BaseChatModel):
         if values["n"] > 1 and values["streaming"]:
             raise ValueError("n must be 1 when streaming.")
         return values
+
+    def _number_message_token(self, messages: list[BaseMessage]):
+        encoding = tiktoken.encoding_for_model(self.model_name)
+        # TODO: 拆分messages在计算token，并加总token数，超过max_tokens则抛出异常
+        num_tokens = len(encoding.encode(messages))
+        return num_tokens
 
     def __call__(
         self,
