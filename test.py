@@ -13,14 +13,20 @@ user = UserMessageTemplate.from_template(user_template)
 sys_msg = SystemMessage(content="system message test")
 sys_prompt = sys.format_prompt(a="aa", c="ccc")
 
-chat = ChatOpenAI()
-# msg = chat([sys_msg])z
-# print(msg)
 
-ai2sql_config = load_skill("AI2Sql")
+chat_config = load_skill("AI2Sql")
 
 
-agent = ReActAgent(prompt=ai2sql_config["prompt"])
+agent = ReActAgent(prompt=chat_config.prompt)
 agent.run()
 sys_msg = SystemMessage(content=agent.prompt)
-usr_msg = UserMessage(content="查询公司所有上市的公司上市代码，公司名称、董秘姓名")
+usr_msg = UserMessage(content="查询上市公司最新股本")
+
+
+chat = ChatOpenAI(
+    **chat_config.completion.dict(exclude={"stop"}),
+)
+
+answer = chat([sys_msg, usr_msg], stop=chat_config.completion.stop)
+
+print(answer)

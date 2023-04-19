@@ -34,5 +34,5 @@ class Config(BaseModel):
 
 
 def load_skill(path: str):
-    config = Config.load_skill(Path(path)).dict()
+    config = Config.load_skill(Path(path))
     return config

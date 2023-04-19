@@ -25,8 +25,11 @@ black = "^23.3.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pylint."MESSAGES CONTROL"]
+disable = ["W1404", "E0213", "W0707", "C0415", "R0901", "R0902", "R0903", "R0904", "R0912", "R0913", "R0914", "R0915", "C0103", "C0114", "C0115", "C0116", "C0301"]
+
 [tool.ruff]
-select = ["E", "F", "C"]
+select = ["E", "F", "C", "W"]
 ignore = ["C0103"]
 
 exclude = [
@@ -65,7 +68,6 @@ max-complexity = 10
 
 [tool.isort]
 profile = "black"
-
 
 [tool.black]
 line-length = 120

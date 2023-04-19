@@ -30,10 +30,7 @@ class ChatOpenAI(BaseChatModel):
             if openai_base_url:
                 openai.api_base = openai_base_url
         except ImportError:
-            raise ValueError(
-                "Could not import openai python package. "
-                "Please install it with `pip install openai`."
-            )
+            raise ValueError("Could not import openai python package. " "Please install it with `pip install openai`.")
         try:
             values["client"] = openai.ChatCompletion
         except AttributeError:
@@ -73,9 +70,7 @@ class ChatOpenAI(BaseChatModel):
             max_tokens=self.max_tokens,
             stop=stop,
         )
-        return (
-            response["choices"][0].get("message").get("content").encode("utf8").decode()
-        )
+        return response["choices"][0].get("message").get("content").encode("utf8").decode()
 
     @staticmethod
     def _create_message_dicts(messages):
