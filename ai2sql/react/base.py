@@ -2,7 +2,6 @@ from typing import Callable
 
 from pydantic import BaseModel
 
-from ai2sql.react import AI2SQL_PROMPT
 from ai2sql.tools import db_metadata
 
 
@@ -13,7 +12,7 @@ class Tool(BaseModel):
 
 
 class ReActAgent:
-    def __init__(self):
+    def __init__(self, prompt: str):
         self.tools = [
             Tool(
                 name="TableInfoByCata",
@@ -26,7 +25,7 @@ class ReActAgent:
                 description="查询并返回Table所有列的信息.输入的内容为Table的名称",
             ),
         ]
-        self.prompt = AI2SQL_PROMPT
+        self.prompt = prompt
 
     @property
     def thought_prefix(self) -> str:
@@ -61,9 +60,7 @@ class ReActAgent:
         return tools_name[:-1]
 
     def _format_prompt(self):
-        self.prompt = self.prompt.format(
-            tools_description=self._tools_description(), tools_name=self._tools_name()
-        )
+        self.prompt = self.prompt.format(tools_description=self._tools_description(), tools_name=self._tools_name())
 
     def run(self):
         self._format_prompt()

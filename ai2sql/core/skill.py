@@ -9,8 +9,9 @@ class Completion(BaseModel):
     model_name: Optional[str] = "gpt-3.5-turbo"
     max_token: Optional[int] = 1024
     temperature: Optional[float] = 0.5
-    stream: Optional[bool] = False
+    streaming: Optional[bool] = False
     stop: Optional[list[str]]
+    n: Optional[int] = 1
 
 
 class Config(BaseModel):
@@ -20,8 +21,9 @@ class Config(BaseModel):
 
     @classmethod
     def load_skill(cls, path: Path):
-        yaml_path = path.resolve().joinpath("config.yaml")
-        txt_path = path.resolve().joinpath("prompt.txt")
+        parten_path = Path("./skills").joinpath(path)
+        yaml_path = parten_path.resolve().joinpath("config.yaml")
+        txt_path = parten_path.resolve().joinpath("prompt.txt")
         data_config = yaml.safe_load(yaml_path.read_text("utf-8"))
         data_txt = txt_path.read_text("utf-8")
         return cls(
