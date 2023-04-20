@@ -1,1 +1,2 @@
-from ai2sql.chat_model.openai import ChatOpenAI
+from .base import BaseChatModel
+from .openai import ChatOpenAI

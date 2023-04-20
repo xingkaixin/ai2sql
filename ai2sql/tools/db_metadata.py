@@ -1,4 +1,4 @@
-def tables_info(self) -> any:
+def tables_info(table_cata: str) -> any:
     return """| Column  | Comment |
 |--------|--------|
 | companycode |公司编号 |
@@ -14,7 +14,8 @@ def tables_info(self) -> any:
 """
 
 
-def table_columns(self) -> any:
+def table_columns(table_name: str) -> any:
+    tables_name = [table.strip() for table in table_name.split(",")]
     return """| Column  | Comment |
 |--------|--------|
 | companycode |公司编号 |
