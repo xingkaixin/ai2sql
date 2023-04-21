@@ -44,7 +44,7 @@ class ReActAgent:
 
     def run(self, question: str):
         sys_msg = SystemMessage(content=self._format_prompt())
-        usr_msg = UserMessage(content=question)
+        usr_msg = UserMessage(content=f"Question: {question}")
         chat_msgs = [sys_msg, usr_msg]
         answer = self.llm(messages=chat_msgs, stop=[self.observation_prefix])
 
@@ -60,9 +60,11 @@ class ReActAgent:
             chat_msgs.append(AIMessage(content=f"{self.observation_prefix}{action_observation}"))
             answer = self.llm(messages=chat_msgs, stop=[self.observation_prefix])
 
+            print("answer:", answer)
+
         if self.final_answer_prefix in answer:
             return answer.split(self.final_answer_prefix)[1]
         return answer
 
     def _find_tool_by_name(self, tool_name: str) -> Tool:
-        return [tool for tool in self.tools if tool.name == tool_name][0]
+        return [tool for tool in self.tools if tool.name in tool_name][0]

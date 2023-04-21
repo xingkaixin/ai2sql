@@ -5,6 +5,7 @@ from ai2sql.tools import Tool, table_columns, tables_info
 
 
 def main():
+    # chat_config = load_skill("AI2Sql")
     chat_config = load_skill("AI2Sql")
 
     llm = ChatOpenAI(
